@@ -1,5 +1,3 @@
-package oleg.podolian;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -22,9 +20,19 @@ public class Crawler {
 
     public static void main(String[] args) {
 
-        List<String> filePaths = Arrays.stream(args).collect(Collectors.toList());
+        List<String> arguments = Arrays.stream(args).collect(Collectors.toList());
 
-        filePaths.forEach(Crawler::printResult);
+        if (arguments.isEmpty()) {
+            System.out.println("Sorry, Bye!");
+            return;
+        }
+
+        if (! (new File(arguments.get(0)).exists())) {
+            TARGET_ELEMENT_ID = arguments.get(0);
+            arguments.remove(0);
+        }
+
+        arguments.forEach(Crawler::printResult);
     }
 
     private static void printResult(String filePath) {
@@ -55,7 +63,7 @@ public class Crawler {
                     CHARSET_NAME,
                     htmlFile.getAbsolutePath());
 
-            return Optional.of(doc.getElementById(TARGET_ELEMENT_ID));
+            return Optional.ofNullable(doc.getElementById(TARGET_ELEMENT_ID));
 
         } catch (IOException e) {
             LOGGER.warning(String.format("Error reading [%s] file as %s", htmlFile.getAbsolutePath(), e.getMessage()));
